@@ -122,13 +122,19 @@ du -sh *
 
 ---
 
-## 🧼 System Prompt (in `main.py`)
+## 🧠 Prompt Structure (in `main.py`)
 
-The LLM is instructed to:
+The assistant uses OpenAI's Responses API with a structured prompt containing:
 
-- Output only terminal commands
-- Avoid backticks, markdown formatting, or explanations
-- Assume Zsh on macOS Ventura or later
+1. **Identity**: Defines the assistant's role
+2. **Instructions**: Rules for command output format
+3. **Examples**: Few-shot learning examples
+
+Key behaviors:
+- Outputs only raw terminal commands
+- Uses Zsh syntax for macOS Ventura+
+- Never includes explanations or formatting
+- Handles multi-command responses
 
 ---
 
