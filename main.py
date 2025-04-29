@@ -7,11 +7,10 @@ from openai import OpenAIError
 import re
 
 def clean_command(raw_text):
-    # Remove triple backticks and any language label like ```zsh, ```bash, etc
+    """Clean up command output by removing markdown formatting."""
     cleaned = re.sub(r"```[\w]*\n?", "", raw_text)
-    cleaned = cleaned.replace("```", "")  # Remove any closing ```
-    cleaned = cleaned.strip()  # Remove leading/trailing whitespace
-    return cleaned
+    cleaned = cleaned.replace("```", "")
+    return cleaned.strip()
 
 def main():
     # Load OpenAI API key
@@ -24,49 +23,65 @@ def main():
     client = OpenAI(api_key=api_key)
 
     # Set up argument parser
-    parser = argparse.ArgumentParser(description="Ask how to do something in the macOS Terminal.")
-    parser.add_argument("question", nargs="+", help="The terminal question you want to ask.")
+    parser = argparse.ArgumentParser(
+        description="Ask how to do something in the macOS Terminal."
+    )
+    parser.add_argument(
+        "question", 
+        nargs="+", 
+        help="The terminal question you want to ask."
+    )
     parser.add_argument(
         "--model",
         choices=["gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "o4-mini", "o3-mini", "gpt-4o", "gpt-4o-mini"],
         default="gpt-4.1",
-        help="Choose which model to use: 'gpt-4.1' for GPT-4.1 (default: gpt-4.1)."
+        help="Choose which model to use (default: gpt-4.1)"
     )
     args = parser.parse_args()
 
-    # Combine multiple words into a full question string
-    user_question = " ".join(args.question)
+    # Construct the prompt following guide.txt best practices
+    instructions = """# Identity
+You are a macOS Terminal Assistant that provides only raw terminal commands.
 
-    # Select model
-    model = args.model
+# Instructions
+* Only output the exact command(s) needed to accomplish the task
+* Do not include any explanations, markdown, or formatting
+* Use Zsh syntax compatible with macOS Ventura or later
+* If multiple commands are needed, separate them with newlines
+* Never wrap commands in code blocks or backticks
 
-    # System prompt
-    system_prompt = (
-        "You are a macOS Terminal Assistant.\n\n"
-        "The user will ask how to perform specific tasks using the macOS Terminal.\n\n"
-        "Your response must be only a plain terminal command or a concise set of commands, without any explanations, formatting, markdown syntax, or code blocks.\n\n"
-        "Do not wrap the output in backticks, triple backticks, or label it like zsh, bash, shell, etc.\n\n"
-        "Simply return the raw command(s) as plain text.\n\n"
-        "Assume the user is using the Zsh shell on a recent version of macOS (e.g., Ventura or later).\n\n"
-        "If multiple steps are absolutely necessary, separate them with newlines."
-    )
+# Examples
+<user_query>
+How do I list files sorted by size?
+</user_query>
+
+<assistant_response>
+ls -lS
+</assistant_response>"""
 
     try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_question}
-            ],
-            temperature=0
+        response = client.responses.create(
+            model=args.model,
+            instructions=instructions,
+            input=" ".join(args.question)
         )
+        
+        # Get the first text output from the response
+        if response.output and len(response.output) > 0:
+            for item in response.output:
+                if item.type == "message" and item.role == "assistant":
+                    for content in item.content:
+                        if content.type == "output_text":
+                            command = clean_command(content.text)
+                            print(command)
+                            return
+        
+        print("Error: No command found in response")
+        sys.exit(1)
+
     except OpenAIError as e:
         print(f"OpenAI API Error: {e}")
         sys.exit(1)
-
-    raw_command = response.choices[0].message.content
-    command = clean_command(raw_command)
-    print(command)
 
 if __name__ == "__main__":
     main()
