@@ -1,12 +1,31 @@
-# Python-generated files
+# Byte-compiled / cache
 __pycache__/
-*.py[oc]
+*.py[cod]
+*.pyo
+
+# Distribution / packaging
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
+*.egg
+.eggs/
 
-# Virtual environments
-.venv
-.aider*
+# macOS file metadata
+.DS_Store
+
+# Editor folders and logs
+.vscode/
+.idea/
+*.log
+
+# Environment files
 .env
+.env.*
+
+# uv / virtual environments
+.venv/
+.uv/
+
+# AI-related tools (optional)
+.aider*
