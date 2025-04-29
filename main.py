@@ -29,8 +29,8 @@ def main():
     parser.add_argument(
         "--model",
         choices=["gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "o4-mini", "o3-mini", "gpt-4o", "gpt-4o-mini"],
-        default="gpt-4o",
-        help="Choose which model to use: 'gpt-4o' for GPT-4o (default: gpt-4o)."
+        default="gpt-4.1",
+        help="Choose which model to use: 'gpt-4.1' for GPT-4.1 (default: gpt-4.1)."
     )
     args = parser.parse_args()
 
@@ -38,7 +38,7 @@ def main():
     user_question = " ".join(args.question)
 
     # Select model
-    model = "gpt-4o"
+    model = args.model
 
     # System prompt
     system_prompt = (
