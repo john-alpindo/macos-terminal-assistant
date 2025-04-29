@@ -114,6 +114,11 @@ ls -la
 ```
 
 ```bash
+$ ai "output the contents of a text file and save it to clipboard"
+cat filename.txt | pbcopy
+```
+
+```bash
 $ ai "How to show disk usage in human-readable format?"
 du -sh *
 ```
