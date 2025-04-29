@@ -150,13 +150,15 @@ macos-terminal-assistant/
 
 You can change the OpenAI model used in `main.py` by modifying the `model` parameter (default is `"gpt-4o"`). Supported text models include:
 
-- `gpt-4.1`
+- `gpt-4.1` (default)
 - `gpt-4.1-mini`
-- `gpt-4.1-nano`
+- `gpt-4.1-nano` 
 - `o4-mini`
 - `o3-mini`
 - `gpt-4o`
 - `gpt-4o-mini`
+
+All models use the new [Responses API](https://platform.openai.com/docs/api-reference/responses) format.
 
 Edit the line in `main.py`:
 
@@ -164,9 +166,12 @@ Edit the line in `main.py`:
 model="gpt-4o"  # change this to another supported model if needed
 ```
 
-### 🛠 Modify the System Prompt
+### 🛠 Modify the Prompt
 
-To adjust the assistant's behavior (e.g., make it verbose or use a different shell), edit the `system_prompt` string inside `main.py`.
+To adjust the assistant's behavior:
+1. Edit the `instructions` string in `main.py`
+2. Update examples in the `# Examples` section
+3. Change identity/behavior rules in `# Identity` and `# Instructions`
 
 ---
 
