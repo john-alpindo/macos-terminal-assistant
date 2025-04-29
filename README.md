@@ -118,6 +118,13 @@ $ ai "output the contents of a text file and save it to clipboard"
 cat filename.txt | pbcopy
 ```
 
+To specify a different GPT model:
+```bash
+$ ai --model gpt-4o-mini "Show disk usage for current directory"
+df -h
+```
+> Note: The `--model` flag lets you choose from supported models listed in `main.py` (default: gpt-4.1)
+
 ✅ GPT responses are automatically cleaned — plain terminal commands without markdown or extra formatting.
 
 ---
